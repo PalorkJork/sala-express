@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const path = require("path");
 const { Product, ProductImage, Category } = require("../../models");
-const { Op } = require("sequelize");
+const { Op, fn, col, where } = require("sequelize");
 
 const router = app.Router();
 
@@ -13,10 +13,16 @@ router.get("/", async (req, res) => {
     const limit = Number(req.query.limit) || 10;
 
     let whereCondition = {};
+ 
     if (req.query.search) {
-      whereCondition.name = {
-        [Op.iLike]: `%${req.query.search}%`,
-      };
+      const search = req.query.search.replace(/\s+/g, "").toLowerCase();
+
+      whereCondition = where(
+        fn("REPLACE", fn("LOWER", col("Product.name")), " ", ""),
+        {
+          [Op.like]: `%${search}%`,
+        },
+      );
     }
 
     if (req.query.categoryId) {

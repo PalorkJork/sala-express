@@ -35,6 +35,7 @@ router.get("/", async (req, res) => {
 
     const { rows: products, count: total } = await Product.findAndCountAll({
       where: whereCondition,
+      distinct: true,
       limit,
       offset,
       order: [["createdAt", "DESC"]],
@@ -207,4 +208,38 @@ router.get("/images/:imageId/download", async (req, res) => {
     res.download(filePath, image.fileName);
   } catch (error) {}
 });
+
+router.delete("/images/:imageId", async (req, res) => {
+  const { imageId } = req.params;
+
+ const image = await ProductImage.findOne({
+    where: {
+      id: imageId
+    }
+  })
+
+  if(!image){
+    return res(404).json({
+      message: `Product Image id=${imageId} not found`
+    })
+  }
+
+  // remove image from folder uploads
+  const fileName = image.imageUrl.split("/").pop()
+
+  const filePath = path.join(process.cwd(), "uploads/products", fileName)
+
+  if(fs.existsSync(filePath)){
+    fs.unlinkSync(filePath)
+  }
+
+  // remove data from db
+  await image.destroy()
+
+  return res.json({
+    message: "Product Image deleted successfully"
+  })
+
+});
+
 module.exports = router;

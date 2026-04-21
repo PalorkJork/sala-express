@@ -69,6 +69,12 @@ app.use("/api/v1/orders", authMiddleware, orderRoute);
 app.use("/api/v1/categories", authMiddleware ,categoryRoute);
 app.use("/api/v1/payments", authMiddleware ,paymentRoute);
 
+app.get('/api/v1/health', (req, res)=> {
+  return res.json({
+    message: 'ok'
+  })
+})
+
 app.post("/api/v1/orders", async (req, res) => {
   try {
     console.log("Request body", req.body);

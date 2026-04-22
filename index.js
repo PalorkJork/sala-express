@@ -24,6 +24,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://www.abc.com",
   "http://localhost:5173",
+  "https://sala-react-v2-nac3.vercel.app"
 ];
 
 const corsOptions = {

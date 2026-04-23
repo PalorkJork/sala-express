@@ -1,6 +1,9 @@
 const crypto = require("crypto");
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 function getReqTime() {
   const d = new Date();
   const pad = (n) => String(n).padStart(2, "0");
@@ -15,7 +18,10 @@ function getReqTime() {
   );
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 function signPayWay(raw) {
   return crypto
     .createHmac("sha512", process.env.ABA_PAYWAY_API_KEY)
@@ -23,7 +29,10 @@ function signPayWay(raw) {
     .digest("base64");
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 function buildPurchaseHash(payload) {
   const raw =
     payload.req_time +
@@ -46,7 +55,10 @@ function buildPurchaseHash(payload) {
   return signPayWay(raw);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 const encodeBase64 = (url) => {
   return Buffer.from(url).toString("base64");
 };

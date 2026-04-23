@@ -2,7 +2,11 @@ const express = require("express");
 const db = require("./models");
 const path = require("path");
 const cors = require("cors");
+<<<<<<< HEAD
 require("dotenv").config();
+=======
+require('dotenv').config();
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
 const authRoute = require("./src/routes/auth");
 const customerRoute = require("./src/routes/customer");
@@ -11,8 +15,11 @@ const productRoute = require("./src/routes/product");
 const orderRoute = require("./src/routes/order");
 const categoryRoute = require("./src/routes/category");
 const paymentRoute = require("./src/routes/payment");
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
 const fileUpload = require("express-fileupload");
 
@@ -26,6 +33,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://www.abc.com",
   "http://localhost:5173",
+  "https://sala-react-v2-nac3.vercel.app"
 ];
 
 const corsOptions = {
@@ -68,6 +76,7 @@ app.use("/api/v1/customers", authMiddleware, customerRoute);
 app.use("/api/v1/users", authMiddleware, userRoute);
 app.use("/api/v1/products", authMiddleware, productRoute);
 app.use("/api/v1/orders", authMiddleware, orderRoute);
+<<<<<<< HEAD
 app.use("/api/v1/categories", authMiddleware, categoryRoute);
 app.use("/api/v1/payments", authMiddleware, paymentRoute);
 
@@ -76,11 +85,25 @@ app.get("/api/v1/health", (req, res) => {
     message: "OK",
   });
 });
+=======
+app.use("/api/v1/categories", authMiddleware ,categoryRoute);
+app.use("/api/v1/payments", authMiddleware ,paymentRoute);
+
+app.get('/api/v1/health', (req, res)=> {
+  return res.json({
+    message: 'ok'
+  })
+})
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
 app.post("/api/v1/orders", async (req, res) => {
   try {
     console.log("Request body", req.body);
+<<<<<<< HEAD
     const { customerId, location, items, discount } = req.body;
+=======
+    const { items, discount } = req.body;
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
     // const customer = await Customer.findByPk(customerId);
     // console.log("Customer", customer);
@@ -120,9 +143,13 @@ app.post("/api/v1/orders", async (req, res) => {
     }
 
     console.log("OrderDetails", orderDetailsData);
+<<<<<<< HEAD
 
     const orderNumber = generateInvoiceNumber();
 
+=======
+    const orderNumber = generateInvoiceNumber()
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
     // Create order into db
     const createdOrder = await Order.create({
       customerId: 0,
@@ -130,7 +157,7 @@ app.post("/api/v1/orders", async (req, res) => {
       total: total,
       discount: discount,
       orderDate: new Date(),
-      location,
+      location: "N/A",
     });
 
     console.log("Created order", createdOrder);
@@ -169,6 +196,7 @@ app.post("/api/v1/orders", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 function generateInvoiceNumber() {
   const now = new Date();
 
@@ -182,7 +210,33 @@ function generateInvoiceNumber() {
   return `SalaIT-${year}${month}${day}-${hours}${minutes}`;
 }
 
+=======
+
+function generateInvoiceNumber() {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  return `SalaIT-${year}${month}${day}-${hours}${minutes}`;
+}
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+
+// Homework
+// Create table payment
+// ID number
+// method string // cash, card, aba_khqr
+// status string // PENDING, PAID, CANCELLED
+// paidAt date
+// remark text
+// amount decimal
+// paywayTranId string

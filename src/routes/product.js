@@ -3,8 +3,12 @@ const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const path = require("path");
 const { Product, ProductImage, Category } = require("../../models");
+<<<<<<< HEAD
 const { Op } = require("sequelize");
 const productimage = require("../../models/productimage");
+=======
+const { Op, fn, col, where } = require("sequelize");
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
 const router = express.Router();
 
@@ -16,24 +20,56 @@ router.get("/", async (req, res) => {
     const offset = (page - 1) * limit;
 
     let whereCondition = {};
+
     if (req.query.search) {
+<<<<<<< HEAD
       whereCondition.name = { [Op.iLike]: `%${req.query.search}%` };
     }
     if (req.query.categoryId) {
       whereCondition.categoryId = req.query.categoryId;
+=======
+      const search = req.query.search.replace(/\s+/g, "").toLowerCase();
+
+      whereCondition = where(
+        fn("REPLACE", fn("LOWER", col("Product.name")), " ", ""),
+        {
+          [Op.like]: `%${search}%`,
+        },
+      );
+    }
+
+    if (req.query.categoryId) {
+      whereCondition.categoryId = {
+        [Op.eq]: req.query.categoryId,
+      };
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
     }
 
     const { rows: products, count: total } = await Product.findAndCountAll({
       where: whereCondition,
+      distinct: true,
       limit,
       offset,
+      order: [["createdAt", "DESC"]],
       include: [
         { model: Category, as: "category", attributes: ["id", "name"] },
         {
+<<<<<<< HEAD
           model: ProductImage, 
           as: "productImages",
           attributes: ["id", "productId", "imageUrl", "fileName"]
         }
+=======
+          model: Category,
+          as: "category",
+          attributes: ["id", "name"],
+        },
+        {
+          model: ProductImage,
+          as: "productImages",
+          attributes: ["id", "productId", "imageUrl", "fileName"],
+        },
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
       ],
     });
 
@@ -56,8 +92,77 @@ router.get("/", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // CREATE product
 router.post("/", async (req, res) => {
+=======
+router.post("", async (req, res) => {
+  router; // const name = req.body.name
+  // const price = req.body.price
+  // const categroyId = req.body.categroyId
+  try {
+    const { name, price, categoryId, isActive, qty } = req.body;
+
+    const createdProduct = await Product.create({
+      name,
+      price,
+      categoryId,
+      qty,
+      isActive,
+    });
+    res.json({
+      message: "Product created successfully",
+      data: createdProduct,
+    });
+  } catch (error) {
+    console.log("Creating product error:", error);
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, categoryId, isActive, qty } = req.body;
+
+    const product = await Product.findByPk(id);
+    if (!product) {
+      return res.status(404).json({
+        message: `Product id=${id} not found`,
+      });
+    }
+
+    await product.update({
+      name,
+      price,
+      categoryId,
+      qty,
+      isActive,
+    });
+
+    const updatedProduct = await Product.findByPk(id, {
+      include: [
+        {
+          model: Category,
+          as: "category",
+        },
+      ],
+    });
+
+    res.json({
+      message: "Product updated successfully",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    console.log("Updating product error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+// Image upload
+router.post("/:id/upload", async (req, res) => {
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
   try {
     const { name, price, categoryId, isActive, qty } = req.body;
 
@@ -148,20 +253,36 @@ router.get("/images/:imageId/download", async (req, res) => {
 
 router.delete("/images/:imageId", async (req, res) => {
   const { imageId } = req.params;
+<<<<<<< HEAD
   const image = await ProductImage.findOne({
+=======
+
+ const image = await ProductImage.findOne({
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
     where: {
       id: imageId
     }
   })
+<<<<<<< HEAD
   if(!image){
     return res(404).json({
       message: `Product image id=${imageId} not found`
+=======
+
+  if(!image){
+    return res(404).json({
+      message: `Product Image id=${imageId} not found`
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
     })
   }
 
   // remove image from folder uploads
+<<<<<<< HEAD
   const fileName = image.imageUrl.split("/").pop();
   console.log("fileName", fileName)
+=======
+  const fileName = image.imageUrl.split("/").pop()
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
   const filePath = path.join(process.cwd(), "uploads/products", fileName)
 
@@ -170,12 +291,17 @@ router.delete("/images/:imageId", async (req, res) => {
   }
 
   // remove data from db
+<<<<<<< HEAD
   await image.destroy();
+=======
+  await image.destroy()
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
   return res.json({
     message: "Product Image deleted successfully"
   })
 
+<<<<<<< HEAD
   // try {
   //   const { imageId } = req.params;
   //   const image = await ProductImage.findByPk(imageId);
@@ -217,3 +343,8 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+=======
+});
+
+module.exports = router;
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11

@@ -1,15 +1,31 @@
 const app = require("express");
 const axios = require("axios");
+<<<<<<< HEAD
 const { Payment, Customer, Order, OrderDetail } = require("../../models");
 const { Op } = require("sequelize");
 const { getReqTime, buildPurchaseHash, encodeBase64, buildCheckTransactionHash } = require("../utils/payway");
 
+=======
+
+const { Payment, Customer, Order, OrderDetail } = require("../../models");
+const { Op } = require("sequelize");
+const {
+  getReqTime,
+  encodeBase64,
+  buildPurchaseHash,
+  buildCheckTransactionHash,
+} = require("../utils/payway");
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 
 const router = app.Router();
 
 // Create payment
 router.post("/:orderId", async (req, res) => {
+<<<<<<< HEAD
   console.log("FRONTEND_URL", process.env.FRONTEND_URL);
+=======
+  console.log("FONTEND_URL", process.env.FRONTEND_URL);
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
   const { orderId } = req.params;
   try {
     // 1. Fetch order
@@ -73,7 +89,11 @@ router.post("/:orderId", async (req, res) => {
       phone: order.customer?.phone || "000000000",
       type: "purchase",
       view_type: "popup",
+<<<<<<< HEAD
       payment_option: "abapay_khqr", // abapay_khqr / cards
+=======
+      payment_option: "abapay_khqr",
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
       return_url: encodedReturnUrl,
       cancel_url: `${process.env.FRONTEND_URL}/admin/pos`,
       continue_success_url: `${process.env.FRONTEND_URL}/admin/pos?tranId=${paywayTranId}`,
@@ -104,7 +124,10 @@ router.post("/:orderId", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // check transaction by tranId
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 router.post("/:tranId/check", async (req, res) => {
   try {
     const { tranId } = req.params;
@@ -172,5 +195,8 @@ router.post("/:tranId/check", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
 module.exports = router;

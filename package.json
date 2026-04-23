@@ -13,13 +13,21 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+<<<<<<< HEAD
     "axios": "^1.15.2",
+=======
+    "axios": "^1.15.1",
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "crypto": "^1.0.1",
     "dayjs": "^1.11.19",
     "docxtemplater": "^3.67.6",
+<<<<<<< HEAD
     "dotenv": "^17.4.2",
+=======
+    "dotenv": "^17.4.1",
+>>>>>>> 13fc290d241a75dad62e4581fa367fbd008d2d11
     "express": "^5.2.1",
     "express-fileupload": "^1.5.2",
     "fs": "^0.0.1-security",

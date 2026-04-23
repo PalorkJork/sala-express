@@ -12,6 +12,8 @@ const orderRoute = require("./src/routes/order");
 const categoryRoute = require("./src/routes/category");
 const paymentRoute = require("./src/routes/payment");
 
+
+
 const fileUpload = require("express-fileupload");
 
 const authMiddleware = require("./src/middlewares/authMiddleware");
@@ -68,6 +70,12 @@ app.use("/api/v1/products", authMiddleware, productRoute);
 app.use("/api/v1/orders", authMiddleware, orderRoute);
 app.use("/api/v1/categories", authMiddleware, categoryRoute);
 app.use("/api/v1/payments", authMiddleware, paymentRoute);
+
+app.get("/api/v1/health", (req, res) => {
+  res.json({
+    message: "OK",
+  });
+});
 
 app.post("/api/v1/orders", async (req, res) => {
   try {

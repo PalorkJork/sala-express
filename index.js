@@ -2,12 +2,15 @@ const express = require("express");
 const db = require("./models");
 const path = require("path");
 const cors = require("cors");
+require("dotenv").config();
 
 const authRoute = require("./src/routes/auth");
 const customerRoute = require("./src/routes/customer");
 const userRoute = require("./src/routes/user");
 const productRoute = require("./src/routes/product");
 const orderRoute = require("./src/routes/order");
+const categoryRoute = require("./src/routes/category");
+const paymentRoute = require("./src/routes/payment");
 
 const fileUpload = require("express-fileupload");
 
@@ -15,7 +18,7 @@ const authMiddleware = require("./src/middlewares/authMiddleware");
 
 const app = express();
 const port = 3000;
-const { Category, Product, Customer, Order, OrderDetail } = require("./models");
+const { Category, Product, Customer, Order, OrderDetail, User } = require("./models");
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -44,12 +47,12 @@ app.use(
   fileUpload({
     limits: { fileSize: 30 * 1024 * 1024 }, // 30MB
     createParentPath: true,
-  }),
+  })
 );
 
 app.use(
   "/uploads/products",
-  express.static(path.join(process.cwd(), "uploads/products")),
+  express.static(path.join(process.cwd(), "uploads/products"))
 );
 
 db.sequelize
@@ -60,23 +63,25 @@ db.sequelize
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/customers", authMiddleware, customerRoute);
 
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/products", productRoute);
-app.use("/api/v1/orders", orderRoute);
+app.use("/api/v1/users", authMiddleware, userRoute);
+app.use("/api/v1/products", authMiddleware, productRoute);
+app.use("/api/v1/orders", authMiddleware, orderRoute);
+app.use("/api/v1/categories", authMiddleware, categoryRoute);
+app.use("/api/v1/payments", authMiddleware, paymentRoute);
 
 app.post("/api/v1/orders", async (req, res) => {
   try {
     console.log("Request body", req.body);
-    const { orderNumber, customerId, location, items, discount } = req.body;
+    const { customerId, location, items, discount } = req.body;
 
-    const customer = await Customer.findByPk(customerId);
-    console.log("Customer", customer);
+    // const customer = await Customer.findByPk(customerId);
+    // console.log("Customer", customer);
 
-    if (!customer) {
-      res.json({
-        message: "Customer not found",
-      });
-    }
+    // if (!customer) {
+    //   res.json({
+    //     message: "Customer not found",
+    //   });
+    // }
 
     const orderDetailsData = [];
     let total = 0;
@@ -108,9 +113,11 @@ app.post("/api/v1/orders", async (req, res) => {
 
     console.log("OrderDetails", orderDetailsData);
 
+    const orderNumber = generateInvoiceNumber();
+
     // Create order into db
     const createdOrder = await Order.create({
-      customerId,
+      customerId: 0,
       orderNumber: orderNumber,
       total: total,
       discount: discount,
@@ -135,10 +142,10 @@ app.post("/api/v1/orders", async (req, res) => {
 
     const completedOrder = await Order.findByPk(createdOrder.id, {
       include: [
-        {
-          model: Customer,
-          as: "customer",
-        },
+        // {
+        //   model: Customer,
+        //   as: "customer",
+        // },
         {
           model: OrderDetail,
           as: "orderDetails",
@@ -154,57 +161,19 @@ app.post("/api/v1/orders", async (req, res) => {
   }
 });
 
-app.post("/api/v1/products", async (req, res) => {
-  // const name = req.body.name
-  // const price = req.body.price
-  // const categroyId = req.body.categroyId
-  try {
-    const { name, price, categoryId, isActive } = req.body;
+function generateInvoiceNumber() {
+  const now = new Date();
 
-    const createdProduct = await Product.create({
-      name,
-      price,
-      categoryId,
-      isActive,
-    });
-    res.json({
-      message: "Product created successfully",
-      data: createdProduct,
-    });
-  } catch (error) {
-    console.log("Creating product error:", error);
-  }
-});
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
 
-app.post("/api/v1/categories", authMiddleware, async (req, res) => {
-  // Business logic
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
 
-  const name = req.body.name;
-  const isActive = req.body.isActive;
+  return `SalaIT-${year}${month}${day}-${hours}${minutes}`;
+}
 
-  const created = await Category.create({ name, isActive });
-
-  res.json({
-    message: "Category created successfully",
-    data: created,
-  });
-});
-
-app.get("/api/v1/categories", authMiddleware, async (req, res) => {
-  const categories = await Category.findAll({
-    include: [
-      {
-        model: Product,
-        as: "products",
-      },
-    ],
-  });
-
-  res.json({
-    message: "Category fetched successfully",
-    data: categories,
-  });
-});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
